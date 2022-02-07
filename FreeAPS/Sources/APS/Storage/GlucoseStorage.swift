@@ -1,5 +1,7 @@
+import AVFAudio
 import Foundation
 import SwiftDate
+import SwiftUI
 import Swinject
 
 protocol GlucoseStorage {
@@ -12,6 +14,7 @@ protocol GlucoseStorage {
     func isGlucoseFresh() -> Bool
     func isGlucoseNotFlat() -> Bool
     func nightscoutGlucoseNotUploaded() -> [BloodGlucose]
+    func nightscoutCGMStateNotUploaded() -> [NigtscoutTreatment]
     var alarm: GlucoseAlarm? { get }
 }
 
@@ -56,12 +59,7 @@ final class BaseGlucoseStorage: GlucoseStorage, Injectable {
                         continue
                     }
                     NSLog("CGM start \(sessionStartDate) lastTreatment \(String(describing: treatments.last))")
-                    if let lastTreatment = treatments.last,
-                       let createdAt = lastTreatment.createdAt,
-                       // When a new Dexcom sensor is started, it produces multiple consequetive
-                       // startDates. Disambiguate them by only allowing a session start per minute.
-                       abs(createdAt.timeIntervalSince(sessionStartDate)) < TimeInterval(60)
-                    {
+                    if let lastTreatment = treatments.last, lastTreatment.createdAt == sessionStartDate {
                         continue
                     }
                     var notes = ""
@@ -168,6 +166,13 @@ final class BaseGlucoseStorage: GlucoseStorage, Injectable {
         let recentGlucose = recent()
 
         return Array(Set(recentGlucose).subtracting(Set(uploaded)))
+    }
+
+    func nightscoutCGMStateNotUploaded() -> [NigtscoutTreatment] {
+        let uploaded = storage.retrieve(OpenAPS.Nightscout.uploadedCGMState, as: [NigtscoutTreatment].self) ?? []
+        let recent = storage.retrieve(OpenAPS.Monitor.cgmState, as: [NigtscoutTreatment].self) ?? []
+
+        return Array(Set(recent).subtracting(Set(uploaded)))
     }
 
     var alarm: GlucoseAlarm? {
