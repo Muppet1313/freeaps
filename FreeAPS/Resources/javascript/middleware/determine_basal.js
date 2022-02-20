@@ -96,9 +96,8 @@ function middleware(iob, currenttemp, glucose, profile, autosens, meal, reservoi
             log = "Chris' formula hit limit by autosens_min setting: " + minLimitChris + ". ISF: " + (profile.sens / newRatio).toPrecision(3) + " (" + ((profile.sens / newRatio) * 0.0555).toPrecision(3) + " mmol/l/U)";
           }
 
-          // Set the new ratio
-            autosens.ratio = newRatio;
-    
-          return log + logTDD;
+        // Set the new ratio
+        autosens.ratio = newRatio;
+        return log + logTDD;
     } else { return "Chris' formula is disabled." }
 }
