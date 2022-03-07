@@ -20,6 +20,7 @@ extension OpenAPS {
         static let autosens = "prepare/autosens.js"
         static let profile = "prepare/profile.js"
         static let log = "prepare/log.js"
+        static let TDD = "monitor/tdd.json"
     }
 
     enum Middleware {
@@ -52,6 +53,9 @@ extension OpenAPS {
         static let meal = "monitor/meal.json"
         static let glucose = "monitor/glucose.json"
         static let iob = "monitor/iob.json"
+        static let cgmState = "monitor/cgm-state.json"
+        static let podAge = "monitor/pod-age.json"
+        static let TDD = "monitor/tdd.json"
     }
 
     enum Enact {
@@ -77,6 +81,8 @@ extension OpenAPS {
         static let uploadedCarbs = "upload/uploaded-carbs.json"
         static let uploadedTempTargets = "upload/uploaded-temptargets.json"
         static let uploadedGlucose = "upload/uploaded-glucose.json"
+        static let uploadedCGMState = "upload/uploaded-cgm-state.json"
+        static let uploadedPodAge = "upload/uploaded-pod-age.json"
     }
 
     enum FreeAPS {
