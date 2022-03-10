@@ -214,5 +214,9 @@ function generate(glucose_data, pumphistory_data, profile_data, preferences_data
     logBasal = ". Delivered scheduled basal rate insulin: " + scheduledBasalInsulin.toPrecision(5) + " U";
     logTDD = ". TDD past 24h is: " + TDD.toPrecision(5) + " U";
     // ----------------------------------------------------
-    return TDD;
+    let newDate = new Date();
+    return {
+        tdd: TDD,
+        timestamp: new Date()
+    };
 }
