@@ -20,7 +20,7 @@ extension OpenAPS {
         static let autosens = "prepare/autosens.js"
         static let profile = "prepare/profile.js"
         static let log = "prepare/log.js"
-        static let TDD = "monitor/tdd.json"
+        static let TDD = "prepare/tdd.js"
     }
 
     enum Middleware {

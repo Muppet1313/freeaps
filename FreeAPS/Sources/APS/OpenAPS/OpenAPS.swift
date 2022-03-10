@@ -203,36 +203,18 @@ final class OpenAPS {
             }
         }
     }
-    
-    func tdd() -> Future<TDD?, Never> {
-        Future { promise in
-            self.processQueue.async {
-                debug(.openAPS, "Start tdd")
-                let pumpHistory = self.loadFileFromStorage(name: OpenAPS.Monitor.pumpHistory)
-                let glucose = self.loadFileFromStorage(name: Monitor.glucose)
-                let profile = self.loadFileFromStorage(name: Settings.profile)
-                let preferences = self.loadFileFromStorage(name: Settings.preferences)
-                let tddCalculation = self.tdd(
-                    glucose: glucose,
-                    pumpHistory: pumpHistory,
-                    profile: profile,
-                    preferences: preferences
-                )
 
-                debug(.openAPS, "TDD: \(tddCalculation)")
-                if var tdd = TDD(from: tddCalculation) {
-                    tdd.timestamp = Date()
-                    self.storage.save(tdd, as: Monitor.TDD)
-                    promise(.success(tdd))
-                } else {
-                    promise(.success(nil))
-                }
-            }
+    private func tdd(pumphistory: JSON, profile: JSON, preferences: JSON) -> RawJSON {
+        dispatchPrecondition(condition: .onQueue(processQueue))
+        return jsWorker.inCommonContext { worker in
+            worker.evaluate(script: Script(name: Prepare.TDD))
+            return worker.call(function: Function.generate, with: [
+                pumphistory,
+                profile,
+                preferences
+            ])
         }
     }
-    
-    
-    
 
     // MARK: - Private
 
@@ -378,30 +360,6 @@ final class OpenAPS {
         }
     }
 
-    private func tdd(
-        glucose: JSON,
-        pumpHistory: JSON,
-        profile: JSON,
-        preferences: JSON
-    ) -> RawJSON {
-        dispatchPrecondition(condition: .onQueue(processQueue))
-        return jsWorker.inCommonContext { worker in
-            worker.evaluate(script: Script(name: Prepare.log))
-            worker.evaluate(script: Script(name: Prepare.TDD))
-            return worker.call(
-                function: Function.generate,
-                with: [
-                    glucose,
-                    pumpHistory,
-                    profile,
-                    preferences
-                ]
-            )
-        }
-    }
-
-    
-    
     private func exportDefaultPreferences() -> RawJSON {
         dispatchPrecondition(condition: .onQueue(processQueue))
         return jsWorker.inCommonContext { worker in
