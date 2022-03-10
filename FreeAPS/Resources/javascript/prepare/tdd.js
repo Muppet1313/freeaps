@@ -217,6 +217,6 @@ function generate(glucose_data, pumphistory_data, profile_data, preferences_data
     let newDate = new Date();
     return {
         tdd: TDD,
-        timestamp: new Date()
+        timestamp: newDate
     };
 }

@@ -54,7 +54,9 @@ final class OpenAPS {
 
                 // determine-basal
                 let reservoir = self.loadFileFromStorage(name: Monitor.reservoir)
-
+                
+                self.tdd()
+                
                 let suggested = self.determineBasal(
                     glucose: glucose,
                     currentTemp: tempBasal,
