@@ -150,6 +150,7 @@ function generate(glucose_data, pumphistory_data, profile_data, preferences_data
             let oldBasalDuration = pumphistory[n]['duration (min)'] / 60;
             // time of old temp basal
             let oldTime = new Date(pumphistory[n].timestamp);
+                        
             let newTime = oldTime;
             let o = n;
             do {
@@ -165,17 +166,23 @@ function generate(glucose_data, pumphistory_data, profile_data, preferences_data
             
             // Time difference in hours, new - old
             let tempBasalTimeDifference = (newTime - oldTime) / 36e5;
+            
             let timeOfbasal = tempBasalTimeDifference - oldBasalDuration;
             
             // if duration of scheduled basal is more than 0
             if (timeOfbasal > 0) {
-                let hour = oldTime.getHours();
-                let minutes = oldTime.getMinutes();
+                
+                // Timestamp after completed temp basal
+                let timeOfScheduledBasal = new Date(oldTime.getTime() + oldBasalDuration*36e5);
+                
+                //oldTime.setHours( oldTime.getHours() + oldBasalDuration );
+                
+                let hour = timeOfScheduledBasal.getHours();
+                let minutes = timeOfScheduledBasal.getMinutes();
                 let seconds = "00";
                 // "hour:minutes:00"
-                let timeString = "" + hour + ":" + minutes + ":" + seconds;
-                let baseTime = new Date(timeString);
-                
+                let baseTime = "" + hour + ":" + minutes + ":" + seconds;
+                                
                 // Default if correct basal schedule rate not found
                 let basalScheduledRate = profile.basalprofile[0].rate;
     
